@@ -1,29 +1,27 @@
 // grab the things we need
 var mongoose = require('mongoose');
-require('mongoose-currency').loadType(mongoose);
 var Schema = mongoose.Schema;
+require('mongoose-currency').loadType(mongoose);
 var Currency = mongoose.Types.Currency;
-
-/* Comment Schema */
 var commentSchema = new Schema({
-    rating: {
+    rating:  {
         type: Number,
         min: 1,
         max: 5,
         required: true
     },
-    comment: {
+    comment:  {
         type: String,
         required: true
     },
-    author: {
+    author:  {
         type: String,
         required: true
     }
 }, {
     timestamps: true
-});  
-
+});
+// create a schema
 var dishSchema = new Schema({
     name: {
         type: String,
@@ -32,32 +30,28 @@ var dishSchema = new Schema({
     },
     image: {
         type: String,
-        default: ''
+        required: true
     },
     category: {
         type: String,
-        default: ''
+        required: true
     },
     label: {
         type: String,
-        default: ''
+        required: true
     },
+    //This is placed here in place of the Currency Schema
     price: {
         type: Currency,
-        default: ''
+        required: true
     },
     description: {
         type: String,
         required: true
     },
-    comments: [commentSchema]
+    comments:[commentSchema]
 }, {
     timestamps: true
 });
-
-// the schema is useless so far
-// we need to create a model using it
-var Dishes = mongoose.model('Dishes', dishSchema);
-
-// make this available to our Node applications
+var Dishes = mongoose.model('Dish', dishSchema);
 module.exports = Dishes;
