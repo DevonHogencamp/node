@@ -20,5 +20,11 @@
             <strong>Age: <%= data.age %></strong>
             <strong>Age: <%= data.job %></strong>
         </p>
+        <h2>Hobbies</h2>
+        <ul>
+            <% data.hobbies.forEach(function(item){ %>
+                <li><%= item %></li>
+            <% }); %>
+        </ul>
     </body>
 </html>
