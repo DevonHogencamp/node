@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-        <style media="screen">
-            body{
-                background: red;
-                color: #fff;
-                padding: 30px;
-            }
-            h1{
-                text-transform: uppercase;
-            }
-        </style>
-    </head>
-    <body>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="assets/styles.css" type="text/css">
+</head>
+<body>
+    <div class="wrapper">
         <% include partials/nav.ejs %>
         <h1>Welcome to the profile of <%= person %></h1>
         <p>
@@ -27,5 +19,6 @@
                 <li><%= item %></li>
             <% }); %>
         </ul>
-    </body>
+    </div>
+</body>
 </html>
