@@ -18,7 +18,7 @@
             <%= qs.job %>
         </p>
 
-        <form id="contactForm">
+        <form id="contactForm" method="post" action="/contact">
             <label for="who">Who do you want to meet?</label>
             <input type="text" name="who" value="<%= qs.name %>">
 

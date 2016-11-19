@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <link rel="stylesheet" href="assets/styles.css" type="text/css">
+    </head>
+    <body>
+        <% include partials/nav.ejs %>
+        <h1>I coded this cool website</h1>
+        <p>
+            You have successfully contacted us
+        </p>
+        <p>
+            You have contacted <%= data.who %>
+        </p>
+        <p>
+            His job is <%= data.job %>
+        </p>
+        <p>
+            We will reply to you at <%= data.email %>
+        </p>
+    </body>
+</html>
