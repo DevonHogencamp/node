@@ -6,8 +6,8 @@ var config = require('./config.json');
 
 var app = express();
 
-// // Add cookie parser functionality to our app
-// app.use(require('cookie-parser'));
+// Add cookie parser functionality to our app
+app.use(require('cookie-parser')());
 
 // This is handeled by our authenticator.js
 app.get('/auth/twitter', authenticator.redirectToTwitterLogin);
