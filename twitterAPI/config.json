@@ -7,5 +7,5 @@
     "consumer_secret" : "aTbBCc4rh6QPNE5AJLH3uzINE0fVGM4WDocEe2V32h67Ty0Mob",
     "oauth_version" : "1.0",
     "oauth_signature" : "HMAC-SHA1",
-    "oauth_callback" : "http://a21c96c2.ngrok.io/request-token"
+    "oauth_callback" : "http://3a92266f.ngrok.io/request-token"
 }

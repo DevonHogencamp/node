@@ -24,5 +24,41 @@ module.exports = {
                 res.redirect(config.authorize_url + '?oauth_token=' + oauth_token);
             }
         });
+    },
+    authenticate : function (req, res, cb) {
+        // Check if we have a temporary credential or not
+        if (!(req.cookies.oauth_token && req.cookies.oauth_token_secret && req.query.oauth_verifier)) {
+            return cb('Request does not have all required keys');
+        }
+        // Clear the request token cookies because we are done with them
+        res.clearCookie('oauth_token');
+
+        res.clearCookie('oauth_token_secret');
+
+        // Call my callback with no error
+        //cb();
+
+        // Exchange verifier for an access token
+        oauth.getOAuthAccessToken(req.cookies.oauth_token, req.cookies.oauth_token_secret, req.cookies.verifier, function (error, oauth_access_token, oauth_access_token_secret, results) {
+            if (error) {
+                return cb(error);
+            }
+            // Get the clients twitter ID
+            oauth.get('https://api.twitter.com/1.1/account/verify_credentials.json', oauth_access_token, oauth_access_token_secret, function (error, data) {
+                if (error) {
+                    console.log(error);
+                    return cb(error);
+                }
+                // Parse the JSON response
+                data = JSON.parse(data);
+
+                // Store the tokens in cookies
+                res.cookie('access_token', oauth_access_token, {httponly : true});
+                res.cookie('access_token_secret', oauth_access_token_secret, {httponly : true});
+
+                // Tell the router we were successful
+                cb();                
+            });
+        });
     }
 };
