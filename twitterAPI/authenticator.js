@@ -35,11 +35,8 @@ module.exports = {
 
         res.clearCookie('oauth_token_secret');
 
-        // Call my callback with no error
-        //cb();
-
         // Exchange verifier for an access token
-        oauth.getOAuthAccessToken(req.cookies.oauth_token, req.cookies.oauth_token_secret, req.cookies.verifier, function (error, oauth_access_token, oauth_access_token_secret, results) {
+        oauth.getOAuthAccessToken(req.cookies.oauth_token, req.cookies.oauth_token_secret, req.query.oauth_verifier, function (error, oauth_access_token, oauth_access_token_secret, results) {
             if (error) {
                 return cb(error);
             }
@@ -55,9 +52,10 @@ module.exports = {
                 // Store the tokens in cookies
                 res.cookie('access_token', oauth_access_token, {httponly : true});
                 res.cookie('access_token_secret', oauth_access_token_secret, {httponly : true});
+                res.cookie('twitter_id', data.id_str, {httponly : true});
 
                 // Tell the router we were successful
-                cb();                
+                cb();
             });
         });
     }
