@@ -12,6 +12,14 @@ var oauth = new OAuth(
 );
 
 module.exports = {
+    get : function (url, access_token, access_token_secret, cb) {
+        oauth.get.call(oauth, url, access_token, access_token_secret, cb);
+    },
+
+    post : function (url, access_token, access_token_secret, body, cb) {
+        oauth.post.call(oauth, url, access_token, access_token_secret, body, cb);
+    },
+
     redirectToTwitterLogin : function (req, res) {
         oauth.getOAuthRequestToken(function (error, oauth_token, oauth_token_secret, results) {
             if (error) {
@@ -25,6 +33,7 @@ module.exports = {
             }
         });
     },
+
     authenticate : function (req, res, cb) {
         // Check if we have a temporary credential or not
         if (!(req.cookies.oauth_token && req.cookies.oauth_token_secret && req.query.oauth_verifier)) {
