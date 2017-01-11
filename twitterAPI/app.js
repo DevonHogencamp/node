@@ -2,9 +2,13 @@
 var url = require('url');
 var express = require('express');
 var queryString = require('querystring');
+var async = require('async');
+
+// Require our seperate modules
 var authenticator = require('./authenticator.js');
 var config = require('./config.json');
 
+// Set up express app
 var app = express();
 
 // Add cookie parser functionality to our app
@@ -73,6 +77,20 @@ app.get('/followers', function (req, res) {
         }
         res.send(data);
     });
+});
+
+app.get('/allFriends', function (req, res) {
+    async.waterfall([
+        // Get Twitter friends and ID's
+        function (cb) {
+
+        },
+
+        // Get Twitter friends data using ID's
+        function (cb) {
+
+        }
+    ]);
 });
 
 app.listen(config.port, function() {
