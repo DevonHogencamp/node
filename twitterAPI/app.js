@@ -37,6 +37,7 @@ app.get('/', function(req, res) {
     if (!req.cookies.access_token || !req.cookies.access_token_secret) {
         return res.redirect('/login');
     }
+    renderMainPageFromTwitter(req, res);
 });
 
 app.get('/tweet', function(req, res) {
@@ -86,8 +87,7 @@ app.get('/friends', function (req, res) {
     });
 });
 
-
-app.get('/allFriends', function (req, res) {
+function renderMainPageFromTwitter(req, res) {
     async.waterfall([
         // Get Twitter friends and ID's
         function (cb) {
@@ -163,7 +163,7 @@ app.get('/allFriends', function (req, res) {
             });
         }
     ]);
-});
+}
 
 app.get('/login', function (req, res) {
     res.render('login');
