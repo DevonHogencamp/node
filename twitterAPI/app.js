@@ -11,8 +11,14 @@ var config = require('./config.json');
 // Set up express app
 var app = express();
 
+// Set up template engine to use EJS
+app.set('view engine', 'ejs');
+
 // Add cookie parser functionality to our app
 app.use(require('cookie-parser')());
+
+// Static Files go to public
+app.use(express.static('./public'));
 
 // This is handeled by our authenticator.js
 app.get('/auth/twitter', authenticator.redirectToTwitterLogin);
@@ -20,16 +26,17 @@ app.get('/auth/twitter', authenticator.redirectToTwitterLogin);
 app.get(url.parse(config.oauth_callback).path, function(req, res) {
     authenticator.authenticate(req, res, function(err) {
         if (err) {
-            console.log(err);
-            res.sendStatus(401);
+            res.redirect('/login');
         } else {
-            res.send('Authentication Successful!');
+            res.redirect('/');
         }
     });
 });
 
 app.get('/', function(req, res) {
-    res.send('Hello World!');
+    if (!req.cookies.access_token || !req.cookies.access_token_secret) {
+        return res.redirect('/login');
+    }
 });
 
 app.get('/tweet', function(req, res) {
@@ -154,8 +161,12 @@ app.get('/allFriends', function (req, res) {
                 res.send(friends);
                 console.log('ids.length: ' + ids.length);
             });
-        }   
+        }
     ]);
+});
+
+app.get('/login', function (req, res) {
+    res.render('login');
 });
 
 app.listen(config.port, function() {
