@@ -3,13 +3,19 @@ var url = require('url');
 var express = require('express');
 var queryString = require('querystring');
 var async = require('async');
+var mongoClient = require('mongodb').MongoClient;
+
 
 // Require our seperate modules
 var authenticator = require('./authenticator.js');
+var storage = require('./storage.js');
 var config = require('./config.json');
 
 // Set up express app
 var app = express();
+
+// Connect to our MongoDB database
+storage.connect();
 
 // Set up template engine to use EJS
 app.set('view engine', 'ejs');
@@ -34,9 +40,14 @@ app.get(url.parse(config.oauth_callback).path, function(req, res) {
 });
 
 app.get('/', function(req, res) {
-    if (!req.cookies.access_token || !req.cookies.access_token_secret) {
+    if (!req.cookies.access_token || !req.cookies.access_token_secret || !req.cookies.twitter_id) {
         return res.redirect('/login');
     }
+    if (!storage.connected()) {
+        console.log('Loading data from Twitter...');
+        return renderMainPageFromTwitter(req, res);
+    }
+    // Get our data from MongoDB
     renderMainPageFromTwitter(req, res);
 });
 
@@ -158,7 +169,23 @@ function renderMainPageFromTwitter(req, res) {
                 friends.sort(function (a, b) {
                     return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
                 });
-                res.send(friends);
+
+                // Transform friends array into format good for our app
+                friends = friends.map(function (friend) {
+                    return {
+                        twitter_id: friend.id_str,
+                        for_user: req.cookies.twitter_id,
+                        name: friend.name,
+                        screen_name: friend.screen_name,
+                        location: friend.location,
+                        profile_image_url: friend.profile_image_url
+                    };
+                });
+
+                res.render('index', {
+                    friends: friends
+                });
+
                 console.log('ids.length: ' + ids.length);
             });
         }

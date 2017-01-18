@@ -14,12 +14,12 @@
                 <ul id="friends">
                     <% friends.forEach(function(friend) { %>
                         <li uid="<%= friend.twitter_id %>" class="friend">
-                            <img src="<%= friend.profile_img_url %>" class="profile-image">
+                            <img class="profile-image" src="<%= friend.profile_image_url %>">
 
                             <p>
                                 <span class="name"><%= friend.name %></span>
 
-                                <span class="screen-name"><%= friend.screen_name %></span>
+                                <span class="screen-name">@<%= friend.screen_name %></span>
                             </p>
 
                             <p class="location"><%= friend.location %></p>
