@@ -1,4 +1,4 @@
-// All of our requires
+// All of our requires for our outside modules
 var url = require('url');
 var express = require('express');
 var queryString = require('querystring');
@@ -26,6 +26,29 @@ app.use(require('cookie-parser')());
 // Static Files go to public
 app.use(express.static('./public'));
 
+/*
+    All of our routes
+*/
+
+app.get('/', function(req, res) {
+    if (!req.cookies.access_token || !req.cookies.access_token_secret || !req.cookies.twitter_id) {
+        return res.redirect('/login');
+    }
+    if (!storage.connected()) {
+        console.log('Loading data from Twitter...');
+        return renderMainPageFromTwitter(req, res);
+    }
+    // Get our data from MongoDB
+    console.log('Loading data from MongoDB...');
+
+    storage.getFriends(req.cookies.twitter_id, function (err, friends) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        
+    });
+});
+
 // This is handeled by our authenticator.js
 app.get('/auth/twitter', authenticator.redirectToTwitterLogin);
 
@@ -37,18 +60,6 @@ app.get(url.parse(config.oauth_callback).path, function(req, res) {
             res.redirect('/');
         }
     });
-});
-
-app.get('/', function(req, res) {
-    if (!req.cookies.access_token || !req.cookies.access_token_secret || !req.cookies.twitter_id) {
-        return res.redirect('/login');
-    }
-    if (!storage.connected()) {
-        console.log('Loading data from Twitter...');
-        return renderMainPageFromTwitter(req, res);
-    }
-    // Get our data from MongoDB
-    renderMainPageFromTwitter(req, res);
 });
 
 app.get('/tweet', function(req, res) {
@@ -170,7 +181,7 @@ function renderMainPageFromTwitter(req, res) {
                     return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
                 });
 
-                // Transform friends array into format good for our app
+                // Transform friends array into format good for our app in other words shrinking the array and taking out the stuff we arent using
                 friends = friends.map(function (friend) {
                     return {
                         twitter_id: friend.id_str,
@@ -185,6 +196,11 @@ function renderMainPageFromTwitter(req, res) {
                 res.render('index', {
                     friends: friends
                 });
+
+                // Asynchronously we get that fresh data from twitter we are going to store the data in MongoDB
+                if (storage.connected) {
+                    storage.insertFriends(friends);
+                }
 
                 console.log('ids.length: ' + ids.length);
             });

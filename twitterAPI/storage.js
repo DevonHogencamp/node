@@ -16,5 +16,12 @@ module.exports = {
     connected: function () {
         console.log('Type of database is ' + (typeof database));
         return typeof database != 'undefined';
+    },
+    insertFriends: function (friends) {
+        database.collection('friends').insert(friends, function (err) {
+            if (err) {
+                console.log('Could not insert friends in the database');
+            }
+        });
     }
 };
