@@ -45,7 +45,23 @@ app.get('/', function(req, res) {
         if (err) {
             return res.status(500).send(err);
         }
-        
+        if (friends.length > 0) {
+            console.log('Data loaded from MongoDB...');
+
+            // Sort the friends alphabetically by name
+            friends.sort(function (a, b) {
+                return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            });
+
+            // Render index.ejs
+            res.render('index', {
+                friends: friends
+            });
+        }
+        else {
+            console.log('Data Loaded from Twitter...');
+            return renderMainPageFromTwitter(req, res);
+        }
     });
 });
 

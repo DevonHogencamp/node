@@ -23,5 +23,12 @@ module.exports = {
                 console.log('Could not insert friends in the database');
             }
         });
+    },
+    getFriends: function (userid, cb) {
+        var cursor = database.collection('friends').find({
+            for_user: userid
+        });
+
+        cursor.toArray(cb);
     }
 };
