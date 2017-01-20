@@ -134,3 +134,7 @@ textarea {
 #notes .add-note:hover {
     opacity: 1.0;
 }
+
+a{
+    text-decoration: none;
+}

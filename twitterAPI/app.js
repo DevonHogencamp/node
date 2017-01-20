@@ -26,6 +26,14 @@ app.use(require('cookie-parser')());
 // Static Files go to public
 app.use(express.static('./public'));
 
+// Clear MongoDB cache in time intervals
+setInterval(function () {
+    console.log('Clearing MongoDB cache...');
+    if (storage.connected()) {
+        storage.deleteFriends();
+    }
+}, 1000 * 60 * 5);
+
 /*
     All of our routes
 */
@@ -225,7 +233,27 @@ function renderMainPageFromTwitter(req, res) {
 }
 
 app.get('/login', function (req, res) {
+    console.log('Deleting the friends collection on login');
+    if (storage.connected()) {
+        storage.deleteFriends();
+    }
+
     res.render('login');
+});
+
+app.get('/logout', function (req, res) {
+    // Clear the cookies
+    res.clearCookie('access_token');
+    res.clearCookie('access_token_secret');
+    res.clearCookie('twitter_id');
+
+    console.log('Deleting the friends collection on login');
+    if (storage.connected()) {
+        storage.deleteFriends();
+    }
+
+    // Take them back to the login page
+    res.redirect('/login');
 });
 
 app.listen(config.port, function() {

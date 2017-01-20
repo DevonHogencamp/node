@@ -30,5 +30,12 @@ module.exports = {
         });
 
         cursor.toArray(cb);
+    },
+    deleteFriends: function () {
+        database.collection('friends').remove({}, function (err) {
+            if (err) {
+                console.log('Could not delete friends in the database');
+            }
+        });
     }
 };
