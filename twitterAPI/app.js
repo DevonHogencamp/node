@@ -24,6 +24,9 @@ app.set('view engine', 'ejs');
 // Add cookie parser functionality to our app
 app.use(require('cookie-parser')());
 
+// Parse JSON body and store resluts in the req.body
+app.use(bodyParser.json());
+
 // Static Files go to public
 app.use(express.static('./public'));
 
@@ -34,6 +37,13 @@ setInterval(function () {
         storage.deleteFriends();
     }
 }, 1000 * 60 * 5);
+
+// A function to ensure the user is logged in
+function ensureLogedIn(req, res, next) {
+    if (!req.cookies.access_token || !req.cookies.access_token_secret || !req.cookies.twitter_id) {
+        return res.sendStatus(401);
+    }
+}
 
 /*
     All of our routes
@@ -71,6 +81,16 @@ app.get('/', function(req, res) {
             console.log('Data Loaded from Twitter...');
             return renderMainPageFromTwitter(req, res);
         }
+    });
+});
+
+// Get the notes for a friend
+app.get('/friends/:uid/notes', function (req, res, next) {
+    storage.getNotes(req.cookies.twitter_id, req.params.uid, function (err, notes) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.send(notes);
     });
 });
 
