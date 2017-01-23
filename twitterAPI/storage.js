@@ -37,5 +37,38 @@ module.exports = {
                 console.log('Could not delete friends in the database');
             }
         });
+    },
+    getNotes: function (ownerId, friendId, cb) {
+        var cursor = database.collection('notes').find({
+            ownerId: ownerId,
+            friendId: friendId,
+        });
+
+        cursor.toArray(function (err, notes) {
+            if (err) {
+                return cb(err);
+            }
+            cb(null, notes.map(function (note) {
+                return {
+                    _id: note._id,
+                    content: note.content
+                };
+            }));
+        });
+    },
+    insertNote: function (ownerId, friendId, content, cb) {
+        database.collection('notes').insert({
+            ownerId: ownerId,
+            friendId: friendId,
+            content: content
+        }, function (err, result) {
+            if (err) {
+                return cb(err, result);
+            }
+            cb(null, {
+                _id: result.ops[0]._id,
+                content: result.ops[0].content
+            });
+        });
     }
 };

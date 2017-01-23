@@ -39,10 +39,11 @@ setInterval(function () {
 }, 1000 * 60 * 5);
 
 // A function to ensure the user is logged in
-function ensureLogedIn(req, res, next) {
+function ensureLoggedIn(req, res, next) {
     if (!req.cookies.access_token || !req.cookies.access_token_secret || !req.cookies.twitter_id) {
         return res.sendStatus(401);
     }
+    next();
 }
 
 /*
@@ -85,12 +86,22 @@ app.get('/', function(req, res) {
 });
 
 // Get the notes for a friend
-app.get('/friends/:uid/notes', function (req, res, next) {
+app.get('/friends/:uid/notes', ensureLoggedIn, function (req, res, next) {
     storage.getNotes(req.cookies.twitter_id, req.params.uid, function (err, notes) {
         if (err) {
             return res.status(500).send(err);
         }
         res.send(notes);
+    });
+});
+
+// Add a new note to a friend
+app.post('/friends/:uid/notes', ensureLoggedIn, function (req, res, next) {
+    storage.insertNote(req.cookies.twitter_id, req.params.uid, req.body.content, function (err, note) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.send(note);
     });
 });
 
