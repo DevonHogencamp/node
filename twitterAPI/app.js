@@ -1,6 +1,7 @@
 // All of our requires for our outside modules
 var url = require('url');
 var express = require('express');
+var bodyParser = require('body-parser');
 var queryString = require('querystring');
 var async = require('async');
 var mongoClient = require('mongodb').MongoClient;
