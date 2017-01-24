@@ -119,6 +119,16 @@ app.put('/friends/:uid/notes/:noteid', ensureLoggedIn, function (req, res, next)
     });
 });
 
+app.delete('/friends/:uid/notes/:noteid', ensureLoggedIn, function (req, res) {
+    var noteId = req.params.noteid;
+    storage.deleteNote(noteId, req.cookies.twitter_id, function (err) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.sendStatus(200);
+    });
+});
+
 // This is handeled by our authenticator.js
 app.get('/auth/twitter', authenticator.redirectToTwitterLogin);
 

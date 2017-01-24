@@ -1,4 +1,5 @@
 var mongoClient = require('mongodb').MongoClient;
+var ObjectID = require('mongodb').ObjectID;
 var database;
 
 module.exports = {
@@ -70,5 +71,26 @@ module.exports = {
                 content: result.ops[0].content
             });
         });
+    },
+    updateNote: function (noteId, ownerId, content, cb) {
+        database.collection('notes').updateOne({
+            _id: new ObjectID(noteId),
+            ownerId: ownerId
+        }, {
+            $set: { content: content }
+        }, function (err, result) {
+            if (err) {
+                return cb(err);
+            }
+            database.collection('notes').findOne({
+                _id: new ObjectID(noteId),
+            });
+        }, cb);
+    },
+    deleteNote: function (noteId, ownerId, cb) {
+        database.collection('notes').deleteOne({
+            _id: new ObjectID(noteId),
+            ownerId: ownerId
+        }, cb);
     }
 };
