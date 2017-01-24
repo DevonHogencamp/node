@@ -105,6 +105,20 @@ app.post('/friends/:uid/notes', ensureLoggedIn, function (req, res, next) {
     });
 });
 
+app.put('/friends/:uid/notes/:noteid', ensureLoggedIn, function (req, res, next) {
+    var noteId = req.params.noteid;
+
+    storage.updateNote(noteId, req.cookies.twitter_id, req.body.content, function (err, note) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.send({
+            _id: note._id,
+            content: note.content
+        });
+    });
+});
+
 // This is handeled by our authenticator.js
 app.get('/auth/twitter', authenticator.redirectToTwitterLogin);
 
